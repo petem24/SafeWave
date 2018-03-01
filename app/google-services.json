@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "56744964048",
+    "firebase_url": "https://safewave-191918.firebaseio.com",
+    "project_id": "safewave-191918",
+    "storage_bucket": "safewave-191918.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56744964048:android:d6d6a8c04d02f4ac",
+        "android_client_info": {
+          "package_name": "ljmu.cmp.safewave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "56744964048-vblaui1fr22bo2gnkajiol3ia17u9l35.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwnXIR2vfxzSzeo1KPVQpZDFIAkawp1HM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
