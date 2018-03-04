@@ -85,6 +85,11 @@ public class AlertForm extends AppCompatActivity {
             new Emergency(Beach.name, ProfileFragment.currentLocation, type.getSelectedItem().toString(), getDetails(), getApplicationContext());
             Emergency.hasEmergency = true;
 
+            if(type.getSelectedItem().equals("Missing Person")){
+                BackgroundTask backgroundTask = new BackgroundTask(getApplicationContext());
+                backgroundTask.execute("sendMissingMessage");
+            }
+
                 Intent intent = new Intent(getApplicationContext(), EmergencyMap.class);
                 startActivity(intent);
 

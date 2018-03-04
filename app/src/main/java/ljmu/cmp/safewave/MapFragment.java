@@ -3,9 +3,11 @@ package ljmu.cmp.safewave;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -31,6 +33,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +61,8 @@ public class MapFragment extends Fragment {
 
     Animation uptodown;
     Animation screentoup;
+
+    static PowerManager.WakeLock wakeLock;
 
     GPSBackground gpsBackground = new GPSBackground();
 
@@ -320,9 +326,15 @@ public class MapFragment extends Fragment {
     @SuppressLint("MissingPermission")
     public void checkIn() {
 
+
+        wakeLock = SplashScreen.pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Some Tag");
+        wakeLock.acquire();
+
         createCheckInMarkers();
         showCheckInMarkers();
         hideBeachMarkers();
+
+        FirebaseMessaging.getInstance().subscribeToTopic(beach.getBeachName());
 
         gpsBackground.getLocationOnce(getContext());
 
@@ -439,6 +451,8 @@ public class MapFragment extends Fragment {
 
     public void checkOut() {
 
+        wakeLock.release();
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(beach.getBeachName());
         deleteCheckInMarkers();
         showBeachMarkers();
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(10), 600, new GoogleMap.CancelableCallback() {
@@ -794,7 +808,6 @@ public class MapFragment extends Fragment {
         markerMap.put("User", userMarker);
 
     }
-
 
 }
 

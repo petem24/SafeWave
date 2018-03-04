@@ -1,6 +1,7 @@
 package ljmu.cmp.safewave;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
@@ -17,11 +19,11 @@ import android.os.Bundle;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.VideoView;
+
 
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +32,7 @@ public class SplashScreen extends AppCompatActivity {
     private static int splashTime = 4000;
     public static boolean startupDone = false;
     public static String nToken;
+    public static PowerManager pm;
 
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -41,6 +44,7 @@ public class SplashScreen extends AppCompatActivity {
 
         runtimePermissions();
 
+        pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
 
     }
 
@@ -139,6 +143,7 @@ public class SplashScreen extends AppCompatActivity {
         wave.setScaleType(ImageView.ScaleType.FIT_XY);
 
         nToken = FirebaseInstanceId.getInstance().getToken();
+        FirebaseMessaging.getInstance().subscribeToTopic("All");
 
 
         try {

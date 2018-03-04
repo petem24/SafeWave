@@ -2,23 +2,8 @@ package ljmu.cmp.safewave;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Looper;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.model.LatLng;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -86,6 +71,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
         String emergencyContactUpdate_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/emergencyContactUpdate.php";
         String updateImage_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/updateImage.php";
         String getLife_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/getLife.php";
+        String sendMissingMessage_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/sendMissingMessage.php";
 
         if (type.equals("login")) {
             try {
@@ -498,8 +484,6 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
                 String slocation = params[2];
                 String location = slocation.substring(10, slocation.length() - 1);
 
-                Date currentTime = Calendar.getInstance().getTime();
-                String time = currentTime.toString();
 
                 URL url = new URL(checkIn_url);
 
@@ -1097,6 +1081,47 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
                 e.printStackTrace();
             }
         }
+
+        if (type.equals("sendMissingMessage")) {
+            try {
+
+                URL url = new URL(sendMissingMessage_url);
+
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String postData =
+                        URLEncoder.encode("missing", "UTF-8") + "=" + URLEncoder.encode("Missing Person", "UTF-8") + "&"
+                                +URLEncoder.encode("beach", "UTF-8") + "=" + URLEncoder.encode(Beach.name, "UTF-8");
+
+                bufferedWriter.write(postData);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
+
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 
 
 
