@@ -22,6 +22,8 @@ public class EmergencyContactForm extends AppCompatActivity {
         final EditText email = findViewById(R.id.inputEmContactEmail);
         final Spinner relation = findViewById(R.id.inputRelation);
 
+
+        //If the user has emergency contact fill the fields with the data
         if (EmergencyContact.hasEmContact == true) {
 
             firstName.setText(EmergencyContact.FirstName);
@@ -41,11 +43,10 @@ public class EmergencyContactForm extends AppCompatActivity {
 
         }
 
-
-
-
         Button submit = findViewById(R.id.btnSubmit);
 
+
+        //add all the fields to vars and submit that to database using a sync
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

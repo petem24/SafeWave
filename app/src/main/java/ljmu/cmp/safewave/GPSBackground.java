@@ -30,24 +30,37 @@ public class GPSBackground {
     @SuppressLint("MissingPermission")
     public void getLocation(final Context context) {
 
+        //Starts getting the location every 12000ms
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(12000);
-        mLocationRequest.setFastestInterval(10000);
+        mLocationRequest.setFastestInterval(12000);
+        //Using the balanced power mode
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
+
+        //When the device gets the location
         LocationCallback mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
 
+                    //Update the users location in the database
                     ProfileFragment.currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     if (ProfileFragment.checkedIn) {
                         BackgroundTask backgroundTask = new BackgroundTask(context);
                         backgroundTask.execute("updateLocation");
 
                         updateLocation(MapFragment.markerMap.get("User"));
+                    }
+                }
+
+                //If the distance between the user and the beach is larger than 2 mile check them out
+                if (ProfileFragment.checkedIn) {
+
+                    if (MapFragment.getDistance(ProfileFragment.currentLocation.latitude, ProfileFragment.currentLocation.longitude, Beach.latLng.latitude, Beach.latLng.longitude) > 2) {
+                        if (ProfileFragment.checkedIn)
+                            MapFragment.bv.setBoo(true);
                     }
                 }
 
@@ -94,7 +107,7 @@ public class GPSBackground {
 
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-
+        //Changes to update ASAP and higher accuracy mode
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(0);
         mLocationRequest.setFastestInterval(0);
@@ -110,7 +123,12 @@ public class GPSBackground {
                     BackgroundTask backgroundTask = new BackgroundTask(context);
                     backgroundTask.execute("updateLocation");
 
-                        updateLocation(EmergencyMap.marker);
+                    updateLocation(EmergencyMap.marker);
+                }
+
+                if (MapFragment.getDistance(ProfileFragment.currentLocation.latitude, ProfileFragment.currentLocation.longitude, Beach.latLng.latitude, Beach.latLng.longitude) > 1) {
+                    if (ProfileFragment.checkedIn)
+                        MapFragment.bv.setBoo(true);
                 }
 
             }
@@ -125,6 +143,7 @@ public class GPSBackground {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
+    //Moves the marker to new location
     public static void updateLocation(Marker currentMarker) {
 
         if (currentMarker != null) {

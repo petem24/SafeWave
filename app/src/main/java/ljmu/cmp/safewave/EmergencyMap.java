@@ -18,14 +18,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EmergencyMap extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     public static Marker marker;
+    static ConcurrentHashMap<String, Marker> eMarkerMap = new ConcurrentHashMap<>();
+    static ConcurrentHashMap<String, Marker> eLLMap = new ConcurrentHashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +47,32 @@ public class EmergencyMap extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         googleMap.getUiSettings().setMapToolbarEnabled(false);
 
+        //Adds user marker
         Marker currentLocation = MapFragment.markerMap.get("User");
         marker = mMap.addMarker(new MarkerOptions()
                 .position(currentLocation.getPosition())
+                .icon(BitmapDescriptorFactory.fromAsset("Images/self-marker.png"))
                 .title("You"));
 
+        //creates lifeguard marker
+        new MapFragment().createLife(mMap, eMarkerMap, eLLMap);
+        showLifeMarker();
+
+
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(MapFragment.cameraPosition), 600, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                mMap.setLatLngBoundsForCameraTarget(mMap.getProjection().getVisibleRegion().latLngBounds);
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+        });
+
+
+        //stops the location updates
         final GPSBackground gpsBackground = new GPSBackground();
         gpsBackground.stopLocationUpdates();
         gpsBackground.getLocationEmergency(getApplicationContext());
@@ -74,13 +100,14 @@ public class EmergencyMap extends FragmentActivity implements OnMapReadyCallback
                     }
                 });
 
+                //completes the emergency
                 yes.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         BackgroundTask backgroundTask = new BackgroundTask(getApplicationContext());
                         Emergency.hasEmergency = false;
                         gpsBackground.stopLocationUpdates();
                         gpsBackground.getLocation(getApplicationContext());
-                        backgroundTask.execute("completeEmergency", "Cancel", edt.getText().toString() );
+                        backgroundTask.execute("completeEmergency", "Cancel", edt.getText().toString(), Emergency.id);
                         Intent intent = new Intent(getApplicationContext(), MainMenu.class);
                         startActivity(intent);
                     }
@@ -91,8 +118,20 @@ public class EmergencyMap extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+
+
+    public void showLifeMarker() {
+        for (String key : eMarkerMap.keySet()) {
+            if (key.contains("Life")) {
+                eMarkerMap.get(key).setVisible(true);
+            }
+        }
+    }
+
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
     }
 }
+
+

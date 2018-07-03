@@ -42,6 +42,9 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         getSupportActionBar().hide();
 
+        nToken = FirebaseInstanceId.getInstance().getToken();
+        FirebaseMessaging.getInstance().subscribeToTopic("All");
+
         runtimePermissions();
 
         pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
@@ -129,6 +132,8 @@ public class SplashScreen extends AppCompatActivity {
 
 
     private void startup() {
+
+        //CREATES ANIMATIONS
         final Animation uptodown = AnimationUtils.loadAnimation(this, R.anim.uptodown);
         final Animation downtoup = AnimationUtils.loadAnimation(this, R.anim.downtoup);
 
@@ -142,9 +147,6 @@ public class SplashScreen extends AppCompatActivity {
         ImageView wave = findViewById(R.id.splashWave);
         wave.setScaleType(ImageView.ScaleType.FIT_XY);
 
-        nToken = FirebaseInstanceId.getInstance().getToken();
-        FirebaseMessaging.getInstance().subscribeToTopic("All");
-
 
         try {
             InputStream inputStream = getApplicationContext().getAssets().open("Images/wave.png");
@@ -157,7 +159,7 @@ public class SplashScreen extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
+        //GETS LOCATION
         GPSBackground gpsBackground = new GPSBackground();
         gpsBackground.getLocationOnce(this);
 

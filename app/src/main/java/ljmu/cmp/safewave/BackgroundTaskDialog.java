@@ -8,9 +8,26 @@ import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -22,6 +39,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -35,6 +53,7 @@ public class BackgroundTaskDialog extends AsyncTask<String,Integer,String> {
     Context context;
     String result = "";
     String line;
+
 
 
 
@@ -133,15 +152,13 @@ public class BackgroundTaskDialog extends AsyncTask<String,Integer,String> {
         }
 
 
-
         return null;
     }
-
 
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        progressBar.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.GONE);
     }
 }

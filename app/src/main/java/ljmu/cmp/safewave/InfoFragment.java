@@ -62,6 +62,7 @@ public class InfoFragment extends Fragment {
 
     @SuppressLint("WrongViewCast")
     @Override
+    //CREATES A LIST OF INFORMATION CARDS
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment

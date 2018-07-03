@@ -1,7 +1,10 @@
 package ljmu.cmp.safewave;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,18 +37,21 @@ public class RescueMode extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         String inLoc = getIntent().getStringExtra("Location");
+        final String id = getIntent().getStringExtra("id");
         String[] s = inLoc.split(",");
         Double lat = Double.valueOf(s[0]);
         Double lng = Double.valueOf(s[1]);
 
         LatLng location = new LatLng(lat, lng);
 
+        //ADDS USER MARKER
         MarkerOptions youMarkerOptions = new MarkerOptions().position(ProfileFragment.currentLocation)
                 .title("You")
                 .icon(BitmapDescriptorFactory.fromAsset("Images/self-marker.png"));
 
         Marker you = googleMap.addMarker(youMarkerOptions);
 
+        //ADDS EMERGENCY MARKER
         MarkerOptions emMarkerOptions = new MarkerOptions().position(location)
                 .title("Emergency")
                 .icon(BitmapDescriptorFactory.fromAsset("Images/warning-marker.png"));
@@ -55,6 +61,7 @@ public class RescueMode extends FragmentActivity implements OnMapReadyCallback {
         mMap.addMarker(new MarkerOptions().position(location).title("Emergency").icon(BitmapDescriptorFactory.fromAsset("Images/warning-marker.png")));
         mMap.addMarker(new MarkerOptions().position(ProfileFragment.currentLocation).title("You").icon(BitmapDescriptorFactory.fromAsset("Images/self-marker.png")));
 
+        //ADDS CAMERA BOUNDS
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(you.getPosition());
         builder.include(em.getPosition());
@@ -67,6 +74,19 @@ public class RescueMode extends FragmentActivity implements OnMapReadyCallback {
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
         mMap.animateCamera(cu);
+
+        FloatingActionButton fab = findViewById(R.id.completeButton);
+
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new BackgroundTask(getApplicationContext()).execute("completeEmergency", "Complete", "By Lifeguard "+User.Username, id);
+
+                Intent intent = new Intent(getApplicationContext(), MainMenu.class);
+                startActivity(intent);
+            }
+        });
 
     }
 }

@@ -18,16 +18,17 @@
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="150dp">
 
             <TextView
                 android:id="@+id/txtHospName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Can you provide more details?"
+                android:text="Hosp Name"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -35,37 +36,45 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <Button
-                android:id="@+id/btnNo"
-                android:layout_width="150dp"
+            <TextView
+                android:id="@+id/txtPhone"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_weight=".50"
-                android:background="#ff3232"
-                android:text="No - Urgent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Phone Number:"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtHospName"
-                tools:ignore="RtlCompat" />
+                app:layout_constraintTop_toBottomOf="@+id/txtHospName" />
 
-            <Button
-                android:id="@+id/btnYes"
-                android:layout_width="150dp"
+            <TextView
+                android:id="@+id/txtPhoneNumberHosp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:layout_marginTop="16dp"
+                android:text="number here"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.187"
+                app:layout_constraintStart_toEndOf="@+id/txtPhone"
+                app:layout_constraintTop_toBottomOf="@+id/txtHospName" />
+
+            <Button
+                android:id="@+id/btnDirect"
+                android:layout_width="255dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:layout_weight=".50"
-                android:background="@color/cardview_light_background"
-                android:text="Yes"
+                android:background="@drawable/button_blue"
+                android:text="Direct Me!"
+                android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtHospName"
-                tools:ignore="RtlCompat" />
+                app:layout_constraintTop_toBottomOf="@+id/txtPhoneNumberHosp"
+                app:layout_constraintVertical_bias="0.533" />
+
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>

@@ -42,9 +42,10 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.ViewHolder>{
         return viewHolder;
     }
 
+
+    //Creates a list of cards with the into from the internal database
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
 
         final InfoFragment infoFragment = cardList.get(position);
         holder.textViewTitle.setText(infoFragment.getTitle());
@@ -76,6 +77,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.ViewHolder>{
 
     }
 
+    //returns the bitmap from assets
     private Bitmap getBitmapFromAssets(String fileName){
 
         AssetManager am = context.getAssets();
@@ -91,6 +93,7 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.ViewHolder>{
         return bitmap;
     }
 
+    //returns the number of items in the list
     @Override
     public int getItemCount() {
 

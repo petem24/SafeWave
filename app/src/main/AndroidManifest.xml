@@ -74,9 +74,6 @@
             android:label="@string/title_activity_beach_full"
             android:theme="@style/DefaultTheme.NoActionBar" />
         <activity android:name="ljmu.cmp.safewave.EmergencyContactForm" />
-        <activity
-            android:name="ljmu.cmp.safewave.SettingsActivity"
-            android:label="@string/title_activity_settings" />
         <activity android:name="ljmu.cmp.safewave.PersonalDetailsActivity" />
         <activity
             android:name="ljmu.cmp.safewave.RescueMode"

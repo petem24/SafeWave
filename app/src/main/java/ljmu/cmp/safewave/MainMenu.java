@@ -27,7 +27,7 @@ public class MainMenu extends AppCompatActivity {
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-
+            //CHANGING FRAGMENT ON CLICK OF NAV BAR
             switch (item.getItemId()) {
                 case R.id.navigation_emergency:
 
@@ -49,7 +49,7 @@ public class MainMenu extends AppCompatActivity {
                     setTitle("Information");
                     return true;
                 case R.id.navigation_profile:
-
+                    //IF USER IS SIGNED IN SHOW PROFILE PAGE
                     if (!User.signedIn) {
                         transaction.replace(R.id.frameLayout, new SignInFragment()).commit();
                         setTitle("Sign In");

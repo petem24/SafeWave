@@ -19,8 +19,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.concurrent.ExecutionException;
 
@@ -46,45 +48,67 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
         inflater = getActivity().getLayoutInflater();
-        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
-
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
 
         TextView textViewName = view.findViewById(R.id.profileName);
         textViewName.setText(User.getFullName());
 
-        if(ProfileFragment.checkedIn == true) {
+        //TEXTVIEWS FILLED WITH USER DATA
+        if (ProfileFragment.checkedIn == true) {
             TextView textViewBeach = view.findViewById(R.id.txtBeach);
-            textViewBeach.setText("Current Beach: "+Beach.name);
+            textViewBeach.setText("Current Beach: " + Beach.name);
         }
 
         TextView textViewUserLevel = view.findViewById(R.id.txtUser);
-        if(User.Level == 's') {
+        if (User.Level == 's') {
             textViewUserLevel.setText("User Level: Standard");
         }
 
-        if(User.Level == 'v'){
+        if (User.Level == 'v') {
             textViewUserLevel.setText("User Level: Verified");
         }
 
-        if(User.Level == 'a'){
+        if (User.Level == 'a') {
             textViewUserLevel.setText("User Level: Admin");
         }
 
         ImageView profileImage = view.findViewById(R.id.imgProfile);
-        if(bitmap != null) {
+        if (bitmap != null) {
             profileImage.setImageBitmap(bitmap);
         }
 
-
+        TextView txtVerify = view.findViewById(R.id.txtUser);
         TextView txtEmContact = view.findViewById(R.id.txtContact);
-        TextView txtSettings = view.findViewById(R.id.txtSettings);
+        TextView txtLogout = view.findViewById(R.id.txtLogout);
         TextView txtPersonal = view.findViewById(R.id.txtPersonal);
 
+        //IF USER CLICKS THE VERIFY BUTTON, SEND REQUEST TO DATABASE
+        txtVerify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BackgroundTask backgroundTask = new BackgroundTask(getContext());
+                try {
+                    backgroundTask.execute("setVerify").get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                if (backgroundTask.result.equals("Requested Before")) {
+                    Toast.makeText(getContext(), "Already Requested",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Request Successful",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         txtEmContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,11 +118,46 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        txtSettings.setOnClickListener(new View.OnClickListener() {
+        //ON LOGOUT CLICK, SETS ALL VARIABLES TO NULL
+        txtLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(), SettingsActivity.class);
+                Beach.name = null;
+                Beach.id = null;
+                Beach.latLng = null;
+
+                User.signedIn = false;
+                User.Username = null;
+                User.FirstName = null;
+                User.LastName = null;
+                User.Gender = null;
+                User.DOB = null;
+                User.Phone = null;
+                User.VerifyStatus = '\u0000';
+                User.Level = '\u0000';
+                User.Height = 0;
+                User.Build = null;
+                User.Allergies = null;
+                User.AddInfo = null;
+                ProfileFragment.bitmap = null;
+
+                //CHECKS THE USER OUT
+                if (checkedIn) {
+                    MapFragment.logoutListner.setBoo(true);
+                    ProfileFragment.checkedIn = false;
+                    ProfileFragment.checkInId = null;
+                }
+
+                Intent i = new Intent(getContext(), MainMenu.class);
                 startActivity(i);
+
+                //UNSUB TO TOPICS
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("Lifeguards");
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("Crosby");
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("Ainsdale");
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("Test");
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("Formby");
+
             }
         });
 

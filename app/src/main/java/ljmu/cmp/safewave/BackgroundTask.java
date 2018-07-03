@@ -11,13 +11,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -41,9 +38,6 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPreExecute() {
-        alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Status");
-
 
     }
 
@@ -51,6 +45,8 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... params) {
         String type = params[0];
+
+        //The urls of all php files used
         String login_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/login.php";
         String register_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/register.php";
         String emergencyFullSigned_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/emergencyFullSigned.php";
@@ -72,7 +68,11 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
         String updateImage_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/updateImage.php";
         String getLife_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/getLife.php";
         String sendMissingMessage_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/sendMissingMessage.php";
+        String setVerify_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/setVerify.php";
+        String getHospitals_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/getHospitalApp.php";
+        String insertAnimal_url = "http://cmpproj.cms.livjm.ac.uk/cmppmahe/insertAnimal.php";
 
+        //Checks login is correct and returns the user data
         if (type.equals("login")) {
             try {
 
@@ -108,7 +108,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
                 inputStream.close();
                 httpURLConnection.disconnect();
 
-                if (!result.equals("Login Failed")) {
+                if (!result.equals("Login Failed") || result.equals(null)) {
 
                     String[] parts = result.split(",");
                     User.Username = parts[0];
@@ -134,7 +134,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
 
         }
 
-
+        //sends the register details to the database
         if (type.equals("register")) {
             try {
 
@@ -174,7 +174,8 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
                                 + URLEncoder.encode("height", "UTF-8") + "=" + URLEncoder.encode(height, "UTF-8") + "&"
                                 + URLEncoder.encode("build", "UTF-8") + "=" + URLEncoder.encode(build, "UTF-8") + "&"
                                 + URLEncoder.encode("allergies", "UTF-8") + "=" + URLEncoder.encode(allergies, "UTF-8") + "&"
-                                + URLEncoder.encode("verifycheck", "UTF-8") + "=" + URLEncoder.encode(verifycheck, "UTF-8");
+                                + URLEncoder.encode("verifycheck", "UTF-8") + "=" + URLEncoder.encode(verifycheck, "UTF-8") + "&"
+                                + URLEncoder.encode("nToken", "UTF-8") + "=" + URLEncoder.encode(SplashScreen.nToken, "UTF-8");
 
 
                 bufferedWriter.write(postData);
@@ -204,6 +205,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
 
         }
 
+        //send emergency details when signed in and forms filled in
         if (type.equals("emergencyFullSigned")) {
 
             try {
@@ -270,6 +272,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
 
         }
 
+        //send emergency details not when signed in and forms filled in
         if (type.equals("emergencyFull")) {
             try {
 
@@ -329,6 +332,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+        //send emergency details when not signed in and forms not filled in
         if (type.equals("emergencyEmpty")) {
             try {
 
@@ -384,6 +388,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+        //send emergency details when signed in and forms not filled in
         if (type.equals("emergencyEmptySigned")) {
             try {
 
@@ -445,6 +450,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
 
         }
 
+        //Returns the beaches from the database
         if (type.equals("getBeachMarkers")) {
             try {
 
@@ -476,6 +482,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+        //adds the user to the check in table
         if (type.equals("setCheckIn")) {
             try {
 
@@ -494,12 +501,29 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
 
                 OutputStream outputStream = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                String postData =
+                String postData;
+
+                if(User.signedIn == false){
+                    postData =
+
+                            URLEncoder.encode("beach", "UTF-8") + "=" + URLEncoder.encode(beach, "UTF-8") + "&"
+                                    + URLEncoder.encode("location", "UTF-8") + "=" + URLEncoder.encode(location, "UTF-8") + "&"
+                                    + URLEncoder.encode("nToken", "UTF-8") + "=" + URLEncoder.encode(SplashScreen.nToken, "UTF-8") + "&"
+                                    + URLEncoder.encode("userName", "UTF-8") + "=" + URLEncoder.encode("No username", "UTF-8");
+                }
+
+                else {
+
+                    postData =
+
+                            URLEncoder.encode("beach", "UTF-8") + "=" + URLEncoder.encode(beach, "UTF-8") + "&"
+                                    + URLEncoder.encode("location", "UTF-8") + "=" + URLEncoder.encode(location, "UTF-8") + "&"
+                                    + URLEncoder.encode("nToken", "UTF-8") + "=" + URLEncoder.encode(SplashScreen.nToken, "UTF-8") + "&"
+                                    + URLEncoder.encode("userName", "UTF-8") + "=" + URLEncoder.encode(User.Username, "UTF-8");
+                }
 
 
-                        URLEncoder.encode("beach", "UTF-8") + "=" + URLEncoder.encode(beach, "UTF-8") + "&"
-                                + URLEncoder.encode("location", "UTF-8") + "=" + URLEncoder.encode(location, "UTF-8") + "&"
-                                 + URLEncoder.encode("nToken", "UTF-8") + "=" + URLEncoder.encode(SplashScreen.nToken, "UTF-8");
+
 
 
                 bufferedWriter.write(postData);
@@ -528,6 +552,8 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+
+        //adds the user to the check in verify table
         if (type.equals("setCheckInVerify")) {
             try {
 
@@ -551,7 +577,8 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
                         URLEncoder.encode("userName", "UTF-8") + "=" + URLEncoder.encode(User.Username, "UTF-8") + "&"
                          +URLEncoder.encode("beach", "UTF-8") + "=" + URLEncoder.encode(beach, "UTF-8") + "&"
                         +URLEncoder.encode("location", "UTF-8") + "=" + URLEncoder.encode(location, "UTF-8") + "&"
-                                + URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(User.getFullName(), "UTF-8");
+                                + URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode(User.getFullName(), "UTF-8") + "&"
+                        +URLEncoder.encode("nToken", "UTF-8") + "=" + URLEncoder.encode(SplashScreen.nToken, "UTF-8");
 
 
                 bufferedWriter.write(postData);
@@ -580,6 +607,8 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+
+        //removes the user from the check in table
         if (type.equals("setCheckOut")) {
             try {
 
@@ -627,11 +656,14 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+        //move live emergency to completed emergency table
         if (type.equals("completeEmergency")) {
             try {
 
                 String reason = params[1];
                 String notes = params[2];
+                String id = params[3];
+
                 URL url = new URL(completeEmergency_url);
 
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -642,7 +674,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
                 OutputStream outputStream = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
                 String postData =
-                        URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(Emergency.id, "UTF-8") + "&"
+                        URLEncoder.encode("id", "UTF-8") + "=" + URLEncoder.encode(id, "UTF-8") + "&"
                                 + URLEncoder.encode("reason", "UTF-8") + "=" + URLEncoder.encode(reason, "UTF-8") + "&"
                                 + URLEncoder.encode("notes", "UTF-8") + "=" + URLEncoder.encode(notes, "UTF-8");
 
@@ -671,6 +703,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+        //adds and emergency contact
         if (type.equals("emergencyContact")) {
             try {
 
@@ -724,7 +757,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
-
+        //gets all emergencies
         if (type.equals("getEmergency")) {
             try {
 
@@ -755,6 +788,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+        //uploads the base64 img to the database
         if (type.equals("uploadImage")) {
             try {
 
@@ -863,9 +897,8 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
                 }
 
                 else {
-                    if(level.equals("a") || level.equals("v"))
+                    if(level.equals("a") || level.equals("v") || ProfileFragment.checkInId == null)
                         ProfileFragment.checkInId = "temp";
-
                 }
 
 
@@ -1095,7 +1128,7 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
                 OutputStream outputStream = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
                 String postData =
-                        URLEncoder.encode("missing", "UTF-8") + "=" + URLEncoder.encode("Missing Person", "UTF-8") + "&"
+                        URLEncoder.encode("message", "UTF-8") + "=" + URLEncoder.encode("Missing Person: "+params[1]+params[2]+params[3], "UTF-8") + "&"
                                 +URLEncoder.encode("beach", "UTF-8") + "=" + URLEncoder.encode(Beach.name, "UTF-8");
 
                 bufferedWriter.write(postData);
@@ -1122,8 +1155,136 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
             }
         }
 
+        if (type.equals("setVerify")) {
+            try {
+
+                URL url = new URL(setVerify_url);
+
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String postData =
+                        URLEncoder.encode("userName", "UTF-8") + "=" + URLEncoder.encode(User.Username, "UTF-8");
+
+                bufferedWriter.write(postData);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
 
 
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        if (type.equals("getHospitals")) {
+            try {
+
+                URL url = new URL(getHospitals_url);
+
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String postData =
+                        URLEncoder.encode("beachName", "UTF-8") + "=" + URLEncoder.encode(Beach.name, "UTF-8");
+
+                bufferedWriter.write(postData);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+
+
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        if (type.equals("insertAnimal")) {
+            try {
+
+                String slocation = ProfileFragment.currentLocation.toString();
+                String location = slocation.substring(10, slocation.length() - 1);
+
+                URL url = new URL(insertAnimal_url);
+
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                String postData =
+                        URLEncoder.encode("aName", "UTF-8") + "=" + URLEncoder.encode(params[1], "UTF-8")+ "&"
+                                +URLEncoder.encode("aDesc", "UTF-8") + "=" + URLEncoder.encode(params[2], "UTF-8")+ "&"
+                                +URLEncoder.encode("aBeach", "UTF-8") + "=" + URLEncoder.encode(Beach.id, "UTF-8")+ "&"
+                                +URLEncoder.encode("aLocation", "UTF-8") + "=" + URLEncoder.encode(location, "UTF-8");
+
+                bufferedWriter.write(postData);
+                bufferedWriter.flush();
+                bufferedWriter.close();
+                outputStream.close();
+
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    result += line;
+                }
+
+
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
 
 
         return null;
@@ -1134,38 +1295,6 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
     protected void onPostExecute(String s) {
 
 
-    }
-
-
-    public String sha1Hash(String toHash) {
-        String hash = null;
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            byte[] bytes = toHash.getBytes("UTF-8");
-            digest.update(bytes, 0, bytes.length);
-            bytes = digest.digest();
-
-            // This is ~55x faster than looping and String.formating()
-            hash = bytesToHex(bytes);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return hash;
-    }
-
-
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
     }
 
 

@@ -105,7 +105,7 @@ public class BeachFragment extends Fragment {
         }
 
 
-
+        //Fill the ui with relevant data from the selected beach
         for (int i = 0; i < SQLite.titleArray.size(); i++) {
             titles = SQLite.titleArray.get(i);
 
@@ -143,6 +143,7 @@ public class BeachFragment extends Fragment {
         return view;
     }
 
+    //Changes the ui to the current weather
     public void getWeather(String url, final int id) throws ExecutionException{
 
         JsonObjectRequest jsObjRequest = new JsonObjectRequest

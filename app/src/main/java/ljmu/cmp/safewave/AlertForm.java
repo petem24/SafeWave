@@ -29,6 +29,7 @@ public class AlertForm extends AppCompatActivity {
         toolbar.setTitle("Submit an Alert");
         setSupportActionBar(toolbar);
 
+        //Alertbox for quick alert
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(AlertForm.this);
         LayoutInflater inflater = getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_urgent, null);
@@ -81,122 +82,162 @@ public class AlertForm extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                //Puts the animal sighting into the animal table and return to main map
+                if (type.getSelectedItem().equals("Animal Sighting")) {
+                    String d = getDetails();
+                    String[] s = d.split(",");
+                    String type = s[0];
+                    String desc = s[1];
+                    BackgroundTask backgroundTask = new BackgroundTask(getApplicationContext());
+                    backgroundTask.execute("insertAnimal", type, desc);
+                    Intent intent = new Intent(getApplicationContext(), MainMenu.class);
+                    startActivity(intent);
+                    finish();
+                } else {
 
-            new Emergency(Beach.name, ProfileFragment.currentLocation, type.getSelectedItem().toString(), getDetails(), getApplicationContext());
-            Emergency.hasEmergency = true;
+                    EditText editAge = findViewById(R.id.editMissAge);
+                    EditText editHeight = findViewById(R.id.editMissHeight);
+                    EditText editName = findViewById(R.id.editMissName);
 
-            if(type.getSelectedItem().equals("Missing Person")){
-                BackgroundTask backgroundTask = new BackgroundTask(getApplicationContext());
-                backgroundTask.execute("sendMissingMessage");
-            }
+                    //sends notification to everyone on the beach about the missing person
+                    if (type.getSelectedItem().equals("Missing Person")) {
+                        BackgroundTask backgroundTask = new BackgroundTask(getApplicationContext());
+                        backgroundTask.execute("sendMissingMessage", editName.getText().toString(), ", Age: " + editAge.getText().toString(), ", Height: " + editHeight.getText().toString() + "cm");
+                    }
 
-                Intent intent = new Intent(getApplicationContext(), EmergencyMap.class);
-                startActivity(intent);
+                    Intent intent = new Intent(getApplicationContext(), EmergencyMap.class);
+                    startActivity(intent);
+                    finish();
 
+                    new Emergency(Beach.name, ProfileFragment.currentLocation, type.getSelectedItem().toString(), getDetails(), getApplicationContext());
+                    Emergency.hasEmergency = true;
 
-
+                }
             }
         });
-
-
 
 
     }
 
 
+    //Changes the fields based on type of alert chosen
     public void changeFields() {
         final Spinner type = findViewById(R.id.spinAlert);
 
-        if (!type.getSelectedItem().toString().equals("Missing Person")) {
+        TextView txtAge = findViewById(R.id.txtMissAge);
+        TextView txtHeight = findViewById(R.id.txtMissHeight);
+        TextView txtName = findViewById(R.id.txtMissName);
+        EditText editAge = findViewById(R.id.editMissAge);
+        EditText editHeight = findViewById(R.id.editMissHeight);
+        EditText editName = findViewById(R.id.editMissName);
+        TextView txtInjType = findViewById(R.id.txtInjType);
+        Spinner spinInjType = findViewById(R.id.spinInjType);
+        TextView txtAnimalType = findViewById(R.id.txtAnimalType);
+        Spinner spinAnimalType = findViewById(R.id.spinAnimalType);
 
-            TextView txtAge = findViewById(R.id.txtMissAge);
-            TextView txtHeight = findViewById(R.id.txtMissHeight);
-            TextView txtName = findViewById(R.id.txtMissName);
+        if (type.getSelectedItem().toString().equals("Missing Person")) {
 
             txtAge.setVisibility(View.GONE);
             txtHeight.setVisibility(View.GONE);
             txtName.setVisibility(View.GONE);
-
-            EditText editAge = findViewById(R.id.editMissAge);
-            EditText editHeight = findViewById(R.id.editMissHeight);
-            EditText editName = findViewById(R.id.editMissName);
-
             editAge.setVisibility(View.GONE);
             editHeight.setVisibility(View.GONE);
             editName.setVisibility(View.GONE);
-        }
-
-        if (type.getSelectedItem().toString().equals("Missing Person")) {
-
-            TextView txtAge = findViewById(R.id.txtMissAge);
-            TextView txtHeight = findViewById(R.id.txtMissHeight);
-            TextView txtName = findViewById(R.id.txtMissName);
+            txtInjType.setVisibility(View.GONE);
+            spinInjType.setVisibility(View.GONE);
+            txtAnimalType.setVisibility(View.GONE);
+            spinAnimalType.setVisibility(View.GONE);
 
             txtAge.setVisibility(View.VISIBLE);
             txtHeight.setVisibility(View.VISIBLE);
             txtName.setVisibility(View.VISIBLE);
-
-            EditText editAge = findViewById(R.id.editMissAge);
-            EditText editHeight = findViewById(R.id.editMissHeight);
-            EditText editName = findViewById(R.id.editMissName);
 
             editAge.setVisibility(View.VISIBLE);
             editHeight.setVisibility(View.VISIBLE);
             editName.setVisibility(View.VISIBLE);
         }
 
-        if (!type.getSelectedItem().toString().equals("Injury")) {
-            TextView txtInjType = findViewById(R.id.txtInjType);
-            Spinner spinInjType = findViewById(R.id.spinInjType);
+        if (type.getSelectedItem().toString().equals("Injury")) {
 
+            txtAge.setVisibility(View.GONE);
+            txtHeight.setVisibility(View.GONE);
+            txtName.setVisibility(View.GONE);
+            editAge.setVisibility(View.GONE);
+            editHeight.setVisibility(View.GONE);
+            editName.setVisibility(View.GONE);
             txtInjType.setVisibility(View.GONE);
             spinInjType.setVisibility(View.GONE);
-        }
-
-        if (type.getSelectedItem().toString().equals("Injury")) {
-            TextView txtInjType = findViewById(R.id.txtInjType);
-            Spinner spinInjType = findViewById(R.id.spinInjType);
+            txtAnimalType.setVisibility(View.GONE);
+            spinAnimalType.setVisibility(View.GONE);
 
             txtInjType.setVisibility(View.VISIBLE);
             spinInjType.setVisibility(View.VISIBLE);
         }
 
-    }
+        if (type.getSelectedItem().toString().equals("Animal Sighting")) {
 
-    public String getDetails(){
+            txtAge.setVisibility(View.GONE);
+            txtHeight.setVisibility(View.GONE);
+            txtName.setVisibility(View.GONE);
+            editAge.setVisibility(View.GONE);
+            editHeight.setVisibility(View.GONE);
+            editName.setVisibility(View.GONE);
+            txtInjType.setVisibility(View.GONE);
+            spinInjType.setVisibility(View.GONE);
+            txtAnimalType.setVisibility(View.GONE);
+            spinAnimalType.setVisibility(View.GONE);
 
-        if (type.getSelectedItem().toString().equals("Missing Person")) {
-
-            EditText editAge = findViewById(R.id.editMissAge);
-            EditText editHeight = findViewById(R.id.editMissHeight);
-            EditText editName = findViewById(R.id.editMissName);
-
-            EditText editDesc = findViewById(R.id.editDesc);
-
-            return editName.getText().toString()+","+editAge.getText().toString()+","+editHeight.getText().toString()+","+editDesc.getText().toString();
-        }
-
-        if (type.getSelectedItem().toString().equals("Injury")) {
-
-
-            Spinner spinInjType = findViewById(R.id.spinInjType);
-
-            EditText editDesc = findViewById(R.id.editDesc);
-
-            return spinInjType.getSelectedItem().toString()+","+editDesc.getText().toString();
-        }
-
-        if (type.getSelectedItem().toString().equals("Lost")) {
-
-            EditText editDesc = findViewById(R.id.editDesc);
-
-            return editDesc.getText().toString();
+            txtAnimalType.setVisibility(View.VISIBLE);
+            spinAnimalType.setVisibility(View.VISIBLE);
         }
 
         if (type.getSelectedItem().toString().equals("Other")) {
 
-            EditText editDesc = findViewById(R.id.editDesc);
+            txtAge.setVisibility(View.GONE);
+            txtHeight.setVisibility(View.GONE);
+            txtName.setVisibility(View.GONE);
+            editAge.setVisibility(View.GONE);
+            editHeight.setVisibility(View.GONE);
+            editName.setVisibility(View.GONE);
+            txtInjType.setVisibility(View.GONE);
+            spinInjType.setVisibility(View.GONE);
+            txtAnimalType.setVisibility(View.GONE);
+            spinAnimalType.setVisibility(View.GONE);
 
+        }
+
+    }
+
+    //returns the details of all the fields
+    public String getDetails() {
+
+        if (type.getSelectedItem().toString().equals("Missing Person")) {
+            EditText editAge = findViewById(R.id.editMissAge);
+            EditText editHeight = findViewById(R.id.editMissHeight);
+            EditText editName = findViewById(R.id.editMissName);
+            EditText editDesc = findViewById(R.id.editDesc);
+            return editName.getText().toString() + "," + editAge.getText().toString() + "," + editHeight.getText().toString() + "," + editDesc.getText().toString();
+        }
+
+        if (type.getSelectedItem().toString().equals("Injury")) {
+            Spinner spinInjType = findViewById(R.id.spinInjType);
+            EditText editDesc = findViewById(R.id.editDesc);
+            return spinInjType.getSelectedItem().toString() + "," + editDesc.getText().toString();
+        }
+
+        if (type.getSelectedItem().toString().equals("Animal Sighting")) {
+            Spinner spinAnimalType = findViewById(R.id.spinAnimalType);
+            EditText editDesc = findViewById(R.id.editDesc);
+            return spinAnimalType.getSelectedItem().toString() + "," + editDesc.getText().toString();
+        }
+
+        if (type.getSelectedItem().toString().equals("Lost")) {
+            EditText editDesc = findViewById(R.id.editDesc);
+            return editDesc.getText().toString();
+        }
+
+        if (type.getSelectedItem().toString().equals("Other")) {
+            EditText editDesc = findViewById(R.id.editDesc);
             return editDesc.getText().toString();
         }
 

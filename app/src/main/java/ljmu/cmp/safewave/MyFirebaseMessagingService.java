@@ -32,13 +32,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-
+        //gets the message and creates notification
         String a = remoteMessage.getData().get("message");
-
         sendNotification(a);
-
-
-
     }
 
     private void sendNotification(String messageBody) {
@@ -47,12 +43,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+        //Create a new notification
         String channelId = "channel";
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_add_alert_black_24dp)
                         .setContentTitle("IMPORTANT SAFETY ALERT")
+                        //sets the message body and the incoming message
                         .setContentText(messageBody)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
@@ -70,7 +68,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-
 
     }
 }

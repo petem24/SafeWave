@@ -28,10 +28,12 @@ public class PersonalDetailsActivity extends AppCompatActivity {
     private String name;
 
     @Override
+    //HERE YOU CAN EDIT PERSONAL DETAILS
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_details);
 
+        //UPLOAD PHOTO
         upload = findViewById(R.id.imgProfileUpload);
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,15 +42,15 @@ public class PersonalDetailsActivity extends AppCompatActivity {
             }
         });
 
-
+        //FIRSTNAME
         EditText firstName = findViewById(R.id.InputFirstNameChange);
         firstName.setText(User.FirstName);
 
-
+        //LASTNAME
         EditText lastName = findViewById(R.id.InputLastNameChange);
         lastName.setText(User.LastName);
 
-
+        //GENDER
         Spinner gender = findViewById(R.id.InputGenderChange);
 
             if(User.Gender.equals("M"))
@@ -61,20 +63,20 @@ public class PersonalDetailsActivity extends AppCompatActivity {
                 gender.setSelection(2);
 
 
-
+        //DATE OF BIRTH
         EditText dob = findViewById(R.id.InputDOBChange);
         dob.setText(User.DOB);
 
-
+        //PHONE
         EditText phone = findViewById(R.id.InputPhoneChange);
         phone.setText(User.Phone);
 
-
+        //HEIGHT
         EditText height = findViewById(R.id.inputHeightChange);
         String a = String.valueOf(User.Height);
         height.setText(a);
 
-
+        //BUILD TYPE
             if(User.Build.equals("Large"))
                 gender.setSelection(0);
 
@@ -84,7 +86,7 @@ public class PersonalDetailsActivity extends AppCompatActivity {
             if(User.Build.equals("Small"))
                 gender.setSelection(2);
 
-
+        //ALLERGIES
         TextView allergies = findViewById(R.id.inputAllergiesChange);
         allergies.setText(User.Allergies);
 
@@ -139,6 +141,7 @@ public class PersonalDetailsActivity extends AppCompatActivity {
         }
     }
 
+    //UPLOADS BASE64 STRING TO DATABASE
     private void uploadImage() {
         if (bitmap != null) {
             if (!bitmap.toString().equals(null)) {
@@ -150,6 +153,7 @@ public class PersonalDetailsActivity extends AppCompatActivity {
         }
     }
 
+    //TURNS IMAGE TO BASE64 STRING
     private String imageToString(Bitmap bitmap){
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);

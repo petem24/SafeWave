@@ -28,6 +28,15 @@
         <item>Other</item>
     </string-array>
 
+    <string name="animal_prompt">Select a Gender</string>
+
+    <string-array name="animal_array">
+        <item>Jellyfish</item>
+        <item>Seal</item>
+        <item>Crab</item>
+        <item>Other</item>
+    </string-array>
+
 
     <string name="type_prompt">Select a Type</string>
 
@@ -35,6 +44,7 @@
         <item>Lost</item>
         <item>Missing Person</item>
         <item>Injury</item>
+        <item>Animal Sighting</item>
         <item>Other</item>
     </string-array>
 

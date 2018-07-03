@@ -80,6 +80,8 @@ public class Register extends AppCompatActivity{
             @Override
             public void onClick(View v) {
 
+
+                //Gets all details from the text boxes and puts them in variables
                 BackgroundTask backgroundTask = new BackgroundTask(context);
 
                 EditText user = findViewById(R.id.InputUserR);
@@ -87,7 +89,6 @@ public class Register extends AppCompatActivity{
 
                 EditText pass = findViewById(R.id.InputPasswordR);
                 String strpass = pass.getText().toString();
-                String strpassHash = backgroundTask.sha1Hash(strpass);
 
                 EditText firstName = findViewById(R.id.InputFirstName);
                 String strfirstname = firstName.getText().toString();
@@ -114,8 +115,8 @@ public class Register extends AppCompatActivity{
 
                 name = struser;
 
-
-                backgroundTask.execute("register", struser, strpassHash, strfirstname, strlastname, strgender, strdob, strphone, strheight, strbuild, strallergies);
+                //Adds the user to the database
+                backgroundTask.execute("register", struser, strpass, strfirstname, strlastname, strgender, strdob, strphone, strheight, strbuild, strallergies);
 
                 uploadImage();
 
@@ -150,6 +151,7 @@ public class Register extends AppCompatActivity{
         }
     }
 
+    //Uploads the base64 string to the database
     private void uploadImage() {
         if (bitmap != null) {
             if (!bitmap.toString().equals(null)) {
@@ -161,6 +163,7 @@ public class Register extends AppCompatActivity{
         }
     }
 
+    //Returns bitmap to base64 string
     private String imageToString(Bitmap bitmap){
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 10, byteArrayOutputStream);
@@ -168,10 +171,10 @@ public class Register extends AppCompatActivity{
         return Base64.encodeToString(imgBytes, Base64.DEFAULT);
     }
 
+    //Updates the label when data is picked
     private void updateLabel() {
         String myFormat = "dd/MM/yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
-
         dob.setText(sdf.format(myCalendar.getTime()));
     }
 

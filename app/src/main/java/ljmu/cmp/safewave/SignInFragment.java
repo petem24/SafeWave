@@ -43,6 +43,8 @@ public class SignInFragment extends Fragment {
         inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.fragment_signin, container, false);
 
+
+        //On Sign in button click, collects the input data and checks it with data from the database
         Button btnSign = view.findViewById(R.id.signIn);
         btnSign.setOnClickListener(new View.OnClickListener() {
 
@@ -56,12 +58,12 @@ public class SignInFragment extends Fragment {
 
                 TextView pass = view.findViewById(R.id.InputPassword);
                 String strpass = pass.getText().toString();
-                String strpassHash = backgroundTask.sha1Hash(strpass);
 
-                if (!strpass.isEmpty() || !struser.isEmpty()) {
+                //CHECKS DATA WITH DATA FROM DATABASE
+                if (!strpass.isEmpty() && !struser.isEmpty()) {
 
                     try {
-                        backgroundTask.execute("login", struser, strpassHash).get();
+                        backgroundTask.execute("login", struser, strpass).get();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
@@ -78,6 +80,7 @@ public class SignInFragment extends Fragment {
                         ProgressBar progressBar = view.findViewById(R.id.signInProgress);
                         BackgroundTaskDialog backgroundTaskDialog = new BackgroundTaskDialog(getContext(), progressBar);
 
+                        //gets the image and decodes it
                         try {
                             backgroundTaskDialog.execute("getImage").get();
                         } catch (InterruptedException e) {
